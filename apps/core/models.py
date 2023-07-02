@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from apps.core.manager import SoftDeleteManager
+from apps.core.manager import BaseModelManager
 
 
 class BaseModel(models.Model):
@@ -15,7 +15,7 @@ class BaseModel(models.Model):
     updated_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                                    related_name='%(class)s_updated_by', verbose_name=_('updated by'))
 
-    objects = SoftDeleteManager()
+    objects = BaseModelManager()
 
     class Meta:
         abstract = True
