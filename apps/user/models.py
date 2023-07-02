@@ -5,6 +5,7 @@ from apps.user.manager import UserAccountManager
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
@@ -12,19 +13,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         verbose_name = _('User')
         verbose_name_plural = _('Users')
 
-    @staticmethod
-    def validate_iranian_phone_number(phone_number):
-        """
-        Validate an Iranian phone number.
-        """
-        if not re.match(r'^\+98\d{10}$', phone_number):
-            raise ValidationError(
-                _('Invalid phone number.'),
-                params={'phone_number': phone_number},
-            )
-
     username = models.CharField(max_length=255, unique=True)
-    phone_number = models.CharField(validators=[validate_iranian_phone_number], max_length=13, unique=True)
+
+    phone_regex = RegexValidator(regex=r'^(\+989|09)\d{9}$',
+                                 message=_(
+                                     "Phone number must be entered in the format: '+989xxxxxxxxx' or '09xxxxxxxxx'."))
+    phone_number = models.CharField(validators=[], max_length=17, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

@@ -19,8 +19,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 DJANGO_APPS = [
-    "admin_interface",
-    "colorfield",
+    # "admin_interface",
+    # "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,7 +29,7 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-PROJECT_APPS = ['apps.core', 'apps.user', 'apps.user_profile']
+PROJECT_APPS = ['apps.core', 'apps.user']
 
 ECOMMERCE_APPS = [
                   # 'apps.category', 'apps.product',
@@ -40,7 +40,7 @@ ECOMMERCE_APPS = [
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
-    'rest_framework_swagger',
+    # 'rest_framework_swagger',
     'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -207,12 +207,12 @@ AUTH_USER_MODEL = "user.UserAccount"
 
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
-
-# if not DEBUG:
-DEFAULT_FROM_EMAIL = 'MM Pc'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = env('EMAIL_HOST')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = env('EMAIL_PORT')
-EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+#
+# # if not DEBUG:
+# DEFAULT_FROM_EMAIL = 'MM Pc'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = env('EMAIL_HOST')
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# EMAIL_PORT = env('EMAIL_PORT')
+# EMAIL_USE_TLS = env('EMAIL_USE_TLS')
