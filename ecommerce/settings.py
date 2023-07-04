@@ -32,7 +32,8 @@ DJANGO_APPS = [
 PROJECT_APPS = ['apps.core', 'apps.user']
 
 ECOMMERCE_APPS = ['apps.category', 'apps.product', 'apps.user_profile', 'apps.cart', 'apps.shipping',
-                  # 'apps.order', 'apps.payment', 'apps.coupon', 'apps.wishlist',
+                  'apps.wishlist',
+                  # 'apps.order', 'apps.payment', 'apps.coupon',
                   # 'apps.review'
                   ]
 

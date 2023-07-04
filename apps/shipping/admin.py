@@ -18,5 +18,3 @@ class ShippingAdmin(BaseAdmin):
             'fields': ('postal_code', 'address', 'description')
         })
     )
-    # Add the shipping_cost field to the fields attribute
-    fields = ('city', 'shipping_method', 'shipping_cost', 'postal_code', 'address', 'description')
