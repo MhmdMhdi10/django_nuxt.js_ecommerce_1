@@ -6,7 +6,8 @@ from .models import UserProfile, Address
 
 @admin.register(UserProfile)
 class UserProfileAdmin(BaseAdmin):
-    list_display = ('id', 'user', 'first_name', 'last_name', 'image')
+    list_display = ('id', 'user', 'first_name', 'last_name', 'image',
+                    'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
     search_fields = ('id', 'user__username', 'first_name', 'last_name')
     fields = ('user', 'image', 'first_name', 'last_name')
 
@@ -19,7 +20,8 @@ class UserProfileAdmin(BaseAdmin):
 
 @admin.register(Address)
 class AddressAdmin(BaseAdmin):
-    list_display = ('id', 'user_profile', 'body', 'city')
+    list_display = ('id', 'user_profile', 'body', 'city',
+                    'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
     search_fields = ('id', 'user_profile__user__username', 'body', 'city')
     fields = ('user_profile', 'body', 'city')
 
