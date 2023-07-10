@@ -51,6 +51,7 @@ class CartItem(BaseModel):
     price = models.IntegerField()
 
     def save(self, *args, **kwargs):
+
         self.price = self.product.price * self.quantity
         super(CartItem, self).save(*args, **kwargs)
 
