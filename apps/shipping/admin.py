@@ -12,8 +12,7 @@ class ShippingAdmin(BaseAdmin):
     search_fields = ('city', 'postal_code', 'address')
     fieldsets = (
         (None, {
-            'fields': ('city', 'shipping_method', 'shipping_cost',
-                       'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
+            'fields': ('city', 'shipping_method', 'shipping_cost',)
         }),
         (_('Additional Information'), {
             'classes': ('collapse',),
