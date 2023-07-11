@@ -1,12 +1,14 @@
 from rest_framework import serializers
-from .models import UserAccount
 import re
 from django.utils.translation import gettext_lazy as _
+from djoser.serializers import UserCreateSerializer
+from ecommerce.settings import AUTH_USER_MODEL
+User = AUTH_USER_MODEL
 
 
-class UserAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAccount
+class UserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = User
         fields = ('id', 'username', 'phone_number', 'is_active', 'is_staff')
 
     def validate_phone_number(self, value):
@@ -23,7 +25,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
         """
         Create and return a new UserAccount instance, given the validated data
         """
-        user = UserAccount.objects.create_user(
+        user = User.objects.create_user(
             username=validated_data['username'],
             phone_number=validated_data['phone_number'],
             password=validated_data['password']
