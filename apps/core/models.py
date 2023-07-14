@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
+from ecommerce.settings import AUTH_USER_MODEL
 from django.utils import timezone
 from apps.core.manager import BaseModelManager
+
+
+User = AUTH_USER_MODEL
 
 
 class BaseModel(models.Model):
@@ -10,10 +13,12 @@ class BaseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('updated at'))
     is_deleted = models.BooleanField(default=False, verbose_name=_('is deleted'))
     deleted_at = models.DateTimeField(null=True, blank=True, verbose_name=_('deleted at'))
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                   related_name='%(class)s_created_by', verbose_name=_('created by'))
-    updated_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                   related_name='%(class)s_updated_by', verbose_name=_('updated by'))
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,
+                                   related_name='%(class)s_created_by', verbose_name=_('created by'),
+                                   null=True, blank=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE,
+                                   related_name='%(class)s_updated_by', verbose_name=_('updated by'),
+                                   null=True, blank=True)
 
     objects = BaseModelManager()
 

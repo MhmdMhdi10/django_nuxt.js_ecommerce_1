@@ -10,9 +10,7 @@ schema_view = get_swagger_view(title='API Documentation')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('auth/', include('djoser.urls')),
-    # path('auth/', include('djoser.urls.jwt')),
-    # path('auth/', include('djoser.social.urls')),
+    path('auth/', include('apps.user.urls', namespace="auth")),
 
     path('docs/', schema_view),
 ]
