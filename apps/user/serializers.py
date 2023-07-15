@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import re
 from django.utils.translation import gettext_lazy as _
-from apps.user.models import UserAccount
+from apps.user.models import UserAccount, OtpCode
 from ecommerce.settings import AUTH_USER_MODEL
 User = AUTH_USER_MODEL
 
@@ -42,3 +42,9 @@ class UserAccountSerializer(serializers.ModelSerializer):
         instance.is_staff = validated_data.get('is_staff', instance.is_staff)
         instance.save()
         return instance
+
+
+class OtpCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OtpCode
+        fields = ['code']
