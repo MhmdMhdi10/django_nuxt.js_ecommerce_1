@@ -39,8 +39,6 @@ ECOMMERCE_APPS = ['apps.category', 'apps.product', 'apps.user_profile', 'apps.ca
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
-    'rest_framework_swagger',
-    # 'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'ckeditor',
