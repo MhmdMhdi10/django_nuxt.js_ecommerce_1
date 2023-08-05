@@ -1,6 +1,8 @@
 import {
     SIGNUP_SUCCESS,
-    SIGNUP_FAIL
+    SIGNUP_FAIL,
+    ACTIVATION_SUCCESS,
+    ACTIVATION_FAIL,
 } from "../actions/types";
 
 
@@ -15,6 +17,11 @@ const initialState = {
 export default function Auth(state = initialState, action) {
     const { type, payload } = action;
     switch(type) {
+        case ACTIVATION_SUCCESS:
+        case ACTIVATION_FAIL:
+            return{
+                ...state
+            }
         case SIGNUP_SUCCESS:
         case SIGNUP_FAIL:
             localStorage.removeItem('access')

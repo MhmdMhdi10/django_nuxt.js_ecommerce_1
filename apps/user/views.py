@@ -21,6 +21,10 @@ class RegisterUser(APIView):
             username = ser_data.validated_data['username']
             phone_number = ser_data.validated_data['phone_number']
             password = ser_data.validated_data['password']
+            re_password = request.data.get('re_password')
+
+            if re_password != password:
+                return Response({'message': "your passwords doesn't match"}, status=status.HTTP_400_BAD_REQUEST)
 
             # checks for any existing otp code
 
@@ -68,45 +72,47 @@ class RegisterUserVerifyCode(APIView):
 
     def post(self, request):
 
-        user_session = request.session['user_registration_info']
-
         ser_data = OtpCodeSerializer(data=request.data)
+
+        user_data = UserAccountSerializer(data=request.data)
 
         # getting the otp code from database
 
-        try:
-            code = OtpCode.objects.get(phone_number=user_session['phone_number'])
-        except Exception as e:
-            code = None
+        if user_data.is_valid():
 
-        # permission HasOTPCode checks if the user has any active otp code
+            try:
+                code = OtpCode.objects.get(phone_number=user_data.validated_data['phone_number'])
+            except Exception as e:
+                code = None
 
-        self.check_object_permissions(request, obj=code)
+            # permission HasOTPCode checks if the user has any active otp code
 
-        if ser_data.is_valid():
+            self.check_object_permissions(request, obj=code)
 
-            # checks for code expiration
+            if ser_data.is_valid():
 
-            if datetime.datetime.now(tz=pytz.UTC) > code.created + datetime.timedelta(minutes=2):
+                # checks for code expiration
 
-                # checks if the code is right
+                if datetime.datetime.now(tz=pytz.UTC) < code.created + datetime.timedelta(minutes=2):
 
-                if code.code == ser_data.validated_data['code']:
-                    user = UserAccount.objects.create_user(
-                        username=user_session['username'],
-                        password=user_session['password'],
-                        phone_number=user_session['phone_number'],
-                    )
-                    user.save()
-                    code.delete()
+                    # checks if the code is right
 
-                    return Response({'message': 'your account has been created'}, status=status.HTTP_202_ACCEPTED)
+                    if code.code == ser_data.validated_data['code']:
+                        user = UserAccount.objects.create_user(
+                            username=user_data.validated_data['username'],
+                            password=user_data.validated_data['password'],
+                            phone_number=user_data.validated_data['phone_number'],
+                        )
+                        user.save()
+                        code.delete()
+
+                        return Response({'message': 'your account has been created'}, status=status.HTTP_202_ACCEPTED)
+                    else:
+                        return Response({'message': 'the code is not correct'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'message': 'the code is not correct'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'this otp code has been expired'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'message': 'this otp code has been expired'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
