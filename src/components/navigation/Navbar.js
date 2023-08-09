@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import { Button, Navbar } from 'flowbite-react';
 // import {DarkThemeToggle, Flowbite } from 'flowbite-react';
 
+import Alert from "../alert";
+
 export default function NavbarWithCTAButton() {
 
   return (
-
+    <>
       <Navbar
         fluid
       >
@@ -23,7 +25,8 @@ export default function NavbarWithCTAButton() {
           {/*<Flowbite>*/}
           {/*  <DarkThemeToggle className={"mr-2"}/>*/}
           {/*</Flowbite>*/}
-          <Link to={"/signup"}>
+
+          <Link to={"/login"}>
             <Button className={"mr-2"} >
               Login
             </Button>
@@ -59,6 +62,9 @@ export default function NavbarWithCTAButton() {
         </Navbar.Collapse>
 
       </Navbar>
+
+      <Alert/>
+    </>
   )
 }
 

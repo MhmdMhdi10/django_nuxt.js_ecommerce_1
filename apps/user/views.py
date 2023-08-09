@@ -4,7 +4,9 @@ from rest_framework import permissions, status
 from apps.user.serializers import UserAccountSerializer, OtpCodeSerializer
 from apps.user.models import UserAccount, OtpCode
 from apps.user.permissions import HasOTPCode
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from rest_framework_simplejwt.views import TokenRefreshView
 
 import datetime
 import random
@@ -24,7 +26,8 @@ class RegisterUser(APIView):
             re_password = request.data.get('re_password')
 
             if re_password != password:
-                return Response({'message': "your passwords doesn't match"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"type": "failure", 'message': "your passwords doesn't match"},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             # checks for any existing otp code
 
@@ -52,7 +55,8 @@ class RegisterUser(APIView):
                 send_otp_code(phone_number, otp_code)
                 OtpCode.objects.create(phone_number=phone_number, code=otp_code)
             else:
-                return Response({'message': "your last code has not expired yet. please wait for 2 minutes"},
+                return Response({"type": "failure",
+                                 'message': "your last code has not expired yet. please wait for 2 minutes"},
                                 status=status.HTTP_400_BAD_REQUEST)
 
             # keeps user information in cookies
@@ -63,8 +67,8 @@ class RegisterUser(APIView):
                 'password': password,
             }
 
-            return Response({'message': 'we sent you a code'}, status=status.HTTP_202_ACCEPTED)
-        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"type": "success", 'message': 'we sent you a code'}, status=status.HTTP_202_ACCEPTED)
+        return Response({"type": "failure", "message": f"{ser_data.errors}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterUserVerifyCode(APIView):
@@ -106,14 +110,134 @@ class RegisterUserVerifyCode(APIView):
                         user.save()
                         code.delete()
 
-                        return Response({'message': 'your account has been created'}, status=status.HTTP_202_ACCEPTED)
+                        return Response({"type": "success", 'message': 'your account has been created'},
+                                        status=status.HTTP_201_CREATED)
                     else:
-                        return Response({'message': 'the code is not correct'}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({"type": "failure", 'message': 'the code is not correct'},
+                                        status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'message': 'this otp code has been expired'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"type": "failure", 'message': 'this otp code has been expired'},
+                                    status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"type": "failure", "message": f"{ser_data.errors}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class LoginUser(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        phone_number = request.data.get('phone_number')
+        password = request.data.get('password')
+
+        try:
+            user = UserAccount.objects.get(phone_number=phone_number)
+        except Exception as e:
+            return Response({"type": "failure", "message": "Phone number doesn't exist"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if user.password == password:
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            # Return the tokens in the response
+            return Response({
+                "type": "success",
+                "message": "login successful",
+                "access": access_token,
+                "refresh": refresh_token,
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"type": "failure", "message": "Incorrect password"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class RefreshTokenView(TokenRefreshView):
+    pass
+
+
+class LogoutUser(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh')
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            else:
+                return Response({"type": "failure", "message": "Refresh token not provided."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({"type": "success", "message": "Logout successful."},
+                            status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"type": "failure", "message": "Invalid refresh token."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePassword(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def patch(self, request):
+        try:
+            current_password = request.data.get("current_password")
+            new_password = request.data.get("new_password")
+            new_re_password = request.data.get("new_re_password")
+
+            username = UserAccountSerializer(request.user).data['username']
+
+            user = UserAccount.objects.get(username=username)
+
+            if user.password == current_password:
+                if new_password == new_re_password:
+                    user.password = new_password
+                    user.save()
+
+                    access_token = RefreshToken(request.auth).access_token
+                    access_token.blacklist()
+
+                    return Response({"type": "success",
+                                     "message": "password changed successfully"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"type": "failure",
+                                     "message": "new_passwords doesn't match"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"type": "failure",
+                                 "message": "current password is wrong"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({"type": "failure", "message": "Invalid Input"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RecoverPassword(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request):
+
+        try:
+            phone_number = request.data.get('phone_number')
+
+            password = UserAccount.objects.get(phone_number=phone_number)
+
+            from apps.user.otp_sender import send_otp_code
+
+            send_otp_code(phone_number, password, message="رمز فعلی شما:")
+
+            return Response({"type": "success", "message": "Your password has been sent to you via sms"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"type": "failure", "message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCurrentUser(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        try:
+            user = UserAccountSerializer(request.user)
+            return Response({"type": "success", 'user': user.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"type": "failure", "message": "data fetching failed. please try again"},
+                            status=status.HTTP_409_CONFLICT)
