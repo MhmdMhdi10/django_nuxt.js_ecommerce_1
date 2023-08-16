@@ -1,6 +1,6 @@
 from django.urls import path
 from apps.user.views import RegisterUser, RegisterUserVerifyCode, LoginUser, RefreshTokenView, LogoutUser,\
-    GetCurrentUser, ChangePassword, RecoverPassword
+    GetCurrentUser, ChangePassword, RecoverPassword, CheckAuthentication
 
 app_name = 'product'
 urlpatterns = [
@@ -11,5 +11,6 @@ urlpatterns = [
     path('logout/', LogoutUser.as_view()),
     path('change_password/', ChangePassword.as_view()),
     path('me/', GetCurrentUser.as_view()),
-    path('recover_password/', RecoverPassword.as_view())
+    path('recover_password/', RecoverPassword.as_view()),
+    path('check_authentication/', CheckAuthentication.as_view())
 ]

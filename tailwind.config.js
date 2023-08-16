@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{html,js,tsx,ts}",
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
+    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
   ],
   darkMode: 'media',
   theme: {
@@ -48,6 +48,8 @@ module.exports = {
     ]
   }
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [
+    require('flowbite/plugin'),
+  ],
 }
 

@@ -7,10 +7,10 @@ import {connect} from 'react-redux'
 
 import { login } from "../../redux/actions/auth";
 import { Oval } from "react-loader-spinner";
-// import {Navigate} from "react-router-dom";
 
 
-const LoginPage = ({login, loading, type, message}) => {
+
+const LoginPage = ({login, loading, type, message, isAuthenticated}) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isOkayToSend, setIsOkayToSend] = useState(false);
@@ -49,18 +49,22 @@ const LoginPage = ({login, loading, type, message}) => {
 
 
   useEffect(() => {
-    if (type==='success' && message==='login successful') {
-      setIsOkayToSend(true);
+    if (type==='success' && message==='login successful' && isAuthenticated) {
+      setIsLoggedIn(true);
     }
-  }, [type, message])
+    else {
+      setIsLoggedIn(false);
+    }
+  }, [type, message, isAuthenticated])
 
   useEffect(() => {
-    if (isOkayToSend && !loading) {
-      setTimeout(()=> {
-        setShouldNavigate(true);
-      }, 5000)
+    if (isLoggedIn && !loading) {
+      setShouldNavigate(true);
     }
-  }, [isOkayToSend, loading]);
+    else {
+      setShouldNavigate(false);
+    }
+  }, [isLoggedIn, loading]);
 
   if (shouldNavigate) {
     return <Navigate to="/" />
@@ -72,30 +76,29 @@ const LoginPage = ({login, loading, type, message}) => {
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <Link to="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            Login
+            ورود
           </Link>
           <div
             className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                login to your account
+                ورود به حساب کاربری
               </h1>
               <form onSubmit={e => onSubmit(e)} className="space-y-4 md:space-y-6">
                 <div>
-                  {!isPhoneNumberValid(phone_number) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone number must be entered in the format: '+989xxxxxxxxx' or '09xxxxxxxxx'.</p>}
+                  {!isPhoneNumberValid(phone_number) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">شماره تلفن همراه شما باید به این اشکال باشد: '۹۸۹xxxxxxxxx' یا '۰۹xxxxxxxxx'.</p>}
                   <label htmlFor="phone_number"
-                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
-                    phone number</label>
+                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">شماره تلفن همراه شما:</label>
                   <input name="phone_number" id="phone_number"
                          value={phone_number}
                          onChange={e => onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                         placeholder="09*********" required />
+                         placeholder="*********۰۹" required />
                 </div>
                 <div>
                   <label htmlFor="password"
-                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                  <input type="password" name="password" id="password" placeholder="password..."
+                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رمز شما:</label>
+                  <input type="password" name="password" id="password" placeholder="رمز..."
                          value={password}
                          onChange={e => onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -112,7 +115,7 @@ const LoginPage = ({login, loading, type, message}) => {
                     disabled={!isOkayToSend}
                   >
                     <Oval height={20} width={20} color={"#fff"} wrapperClass="" />
-                    <span style={{ marginLeft: '10px' }}>Create an account</span>
+                    <span style={{ marginLeft: '10px' }}>ورود به حساب کاربری</span>
                   </button>
                   :
                   <button
@@ -124,13 +127,12 @@ const LoginPage = ({login, loading, type, message}) => {
                     } ${isOkayToSend && 'dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'}`}
                     disabled={!isOkayToSend}
                   >
-                    Login to your account
+                    ورود به حساب کاربری
                   </button>
                 }
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  don't have an account? <Link to="/login"
-                                                 className="font-medium text-primary-600 hover:underline dark:text-primary-500">SignUp
-                  here</Link>
+                  حساب کاربری ندارید؟ <Link to="/login"
+                                                 className="font-medium text-primary-600 hover:underline dark:text-primary-500">ایجاد جساب کاربری</Link>
                 </p>
               </form>
             </div>
@@ -145,6 +147,7 @@ const mapStateToProps = state => ({
   loading: state.Auth.loading,
   type: state.Auth.type,
   message: state.Auth.message,
+  isAuthenticated: state.Auth.isAuthenticated,
 })
 
 export default connect(mapStateToProps, {

@@ -10,6 +10,12 @@ import {
   LOGIN_FAIL,
   USER_LOADED_SUCCESS,
   USER_LOADED_FAIL,
+  AUTHENTICATED_SUCCESS,
+  AUTHENTICATED_FAIL,
+  REFRESH_SUCCESS,
+  REFRESH_FAIL,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
 
 } from "./types";
 
@@ -20,6 +26,52 @@ import axios from "axios";
 export const resetAuthState = () => ({
   type: RESET_AUTH_STATE,
 });
+
+export const check_authentication = () => async dispatch => {
+    if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `JWT ${localStorage.getItem('access')}`,
+            }
+        };
+
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/check_authentication/`, config);
+
+            if (res.status === 200) {
+                dispatch({
+                    type: AUTHENTICATED_SUCCESS,
+                    payload: res.data
+                });
+
+            } else {
+                dispatch({
+                    type: AUTHENTICATED_FAIL,
+                    payload: res.data
+                });
+            }
+        } catch (err) {
+            let errorMessage = "Server error"; // Default error message
+            let errorType = "failure"; // Default error type
+
+            if (err.response && err.response.data) {
+                errorMessage = err.response.data.message || errorMessage;
+                errorType = err.response.data.type || errorType;
+            }
+            dispatch({
+                type: AUTHENTICATED_FAIL,
+                payload: { "type": errorType, "message": errorMessage }
+            });
+        }
+    } else {
+        dispatch({
+            type: AUTHENTICATED_FAIL,
+            payload: { "type": 'failure', "message": "user is not logged in" }
+        });
+    }
+}
+
 
 export const signup = (username, phone_number, password, re_password) => async dispatch => {
     dispatch({
@@ -176,6 +228,7 @@ export const load_user = () => async dispatch => {
     }
 }
 
+
 export const login = (phone_number, password) => async dispatch => {
     dispatch({
         type: SET_AUTH_LOADING
@@ -230,5 +283,107 @@ export const login = (phone_number, password) => async dispatch => {
             type: REMOVE_AUTH_LOADING
         });
         dispatch(setAlert(errorMessage, errorType));
+    }
+}
+
+
+export const refresh = () => async dispatch => {
+    if (localStorage.getItem('refresh')) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const body = JSON.stringify({
+            refresh: localStorage.getItem('refresh')
+        });
+
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/refresh/`, body, config);
+
+            if (res.status === 200) {
+                dispatch({
+                    type: REFRESH_SUCCESS,
+                    payload: res.data
+                });
+            } else {
+                dispatch({
+                    type: REFRESH_FAIL,
+                    payload: res.data
+                });
+            }
+        } catch (err) {
+            let errorMessage = "Server error"; // Default error message
+            let errorType = "failure"; // Default error type
+
+            if (err.response && err.response.data) {
+                    errorMessage = err.response.data.message || errorMessage;
+                    errorType = err.response.data.type || errorType;
+            }
+            dispatch({
+                type: REFRESH_FAIL,
+                payload: { "type": errorType, "message": errorMessage }
+            });
+        }
+    } else {
+        dispatch({
+            type: REFRESH_FAIL,
+            payload: { "type": "failure", "message": "you are not logged in" }
+        });
+    }
+}
+
+
+export const logout = () => async dispatch => {
+    if (localStorage.getItem('refresh')) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const body = JSON.stringify({
+            refresh: localStorage.getItem('refresh')
+        });
+
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/logout/`, body, config);
+
+            if (res.status === 200) {
+                dispatch({
+                    type: LOGOUT_SUCCESS,
+                    payload: res.data
+                });
+                dispatch(setAlert(res.data.message , res.data.type));
+            } else {
+                dispatch({
+                    type: LOGOUT_FAIL,
+                    payload: res.data
+                });
+                dispatch(setAlert('Logout Successful', 'success'));
+            }
+        } catch (err) {
+            let errorMessage = "Server error"; // Default error message
+            let errorType = "failure"; // Default error type
+
+            if (err.response && err.response.data) {
+                    errorMessage = err.response.data.message || errorMessage;
+                    errorType = err.response.data.type || errorType;
+            }
+            dispatch({
+                type: LOGOUT_FAIL,
+                payload: { "type": errorType, "message": errorMessage }
+            });
+            dispatch(setAlert('Logout Successful', 'success'));
+        }
+    } else {
+        dispatch({
+            type: LOGOUT_FAIL,
+            payload: { "type": "failure", "message": "you are logged out" }
+        });
+        dispatch(setAlert('Logout Successful', 'success'));
     }
 }

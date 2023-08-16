@@ -169,7 +169,7 @@ class LogoutUser(APIView):
                 return Response({"type": "failure", "message": "Refresh token not provided."},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({"type": "success", "message": "Logout successful."},
+            return Response({"type": "success", "message": "Logout Successful."},
                             status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -237,7 +237,20 @@ class GetCurrentUser(APIView):
     def get(self, request):
         try:
             user = UserAccountSerializer(request.user)
-            return Response({"type": "success", 'user': user.data}, status=status.HTTP_200_OK)
+            user_data = user.data
+            user_data.pop('password')
+
+            return Response({"type": "success",
+                             'user': user_data},
+                            status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"type": "failure", "message": "data fetching failed. please try again"},
                             status=status.HTTP_409_CONFLICT)
+
+
+class CheckAuthentication(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        return Response({"type": "success", "message": "Authenticated"}, status=status.HTTP_200_OK)

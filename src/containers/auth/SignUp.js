@@ -136,18 +136,18 @@ const SignupPage = ({signup, activate, loading, type, message, resetAuthState}) 
       {(codeSent===true) ? (<section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <Link to="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            Otp Code
+            رمز موقت
           </Link>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                A 6 digit code has been sent to you
+                یک رمز ۶ رقمی برای شما ارسال شد
               </h1>
               <form onSubmit={e=>onSubmitVerify(e)} className="space-y-4 md:space-y-6">
                 <div>
-                  {!isCodeValid(code) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">code should be 6 letters</p>}
-                  <label htmlFor="code" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
-                    Code</label>
+                  {!isCodeValid(code) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رمز باید ۶ رقم باشد</p>}
+                  <label htmlFor="code" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    رمز شما:</label>
                   <input name="code" id="code"
                          value={code}
                          onChange={e=>onChange(e)}
@@ -162,20 +162,20 @@ const SignupPage = ({signup, activate, loading, type, message, resetAuthState}) 
                     <></> // or any other content you want to render when loading is false
                   )
                   }
-                  <span style={{ marginLeft: '10px' }}>Create an account</span>
+                  <span style={{ marginLeft: '10px' }}>ایجاد حساب کاربری</span>
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  didn't receive the code ?&nbsp;
+                  رمز را دریافت نکردید ؟&nbsp;
                   {timer === 0 ? (
                   <button  onClick={() => {startTimer(); signup(username, phone_number, password, re_password);}} className="font-medium text-primary-600 hover:underline dark:text-primary-500">
-                    Send again
+                    ارسال دوباره
                   </button>
                     ) : (
                   <button disabled className="font-medium hover:underline text-gray-400 cursor-not-allowed">
-                    Send again
+                    ارسال دوباره
                   </button>
                     )}
-                  <p>Send Again in {timer} seconds</p>
+                  <p>ارسال دوباره در {timer} ثانیه </p>
                 </p>
               </form>
             </div>
@@ -186,51 +186,52 @@ const SignupPage = ({signup, activate, loading, type, message, resetAuthState}) 
         (<section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <Link to="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            SignUp
+            ثبت نام
           </Link>
           <div
             className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Create and account
+                ایجاد حساب کاربری
               </h1>
               <form onSubmit={e=>onSubmit(e)} className="space-y-4 md:space-y-6">
                 <div>
-                  {!isUsernameValid(username) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">your username should be 4 or more letters</p>}
-                  <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
-                    username</label>
+                  {!isUsernameValid(username) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">نام کاربری شما باید بیش از ۴ کاراکتر باشد</p>}
+                  <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    نام کاربری شما:
+                  </label>
                   <input name="username" id="username"
                          value={username}
                          onChange={e=>onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                         placeholder="username..." required/>
+                         placeholder="نام کاربری..." required/>
                 </div>
                 <div>
-                  {!isPhoneNumberValid(phone_number) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone number must be entered in the format: '+989xxxxxxxxx' or '09xxxxxxxxx'.</p>}<br/>
-                  <label htmlFor="phone_number" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
-                    phone number</label>
+                  {!isPhoneNumberValid(phone_number) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">شماره تلفن همراه شما باید به این اشکال باشد: '۹۸۹xxxxxxxxx' یا '۰۹xxxxxxxxx'.</p>}<br/>
+                  <label htmlFor="phone_number" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    شماره تلفن همراه شما:</label>
                   <input name="phone_number" id="phone_number"
                          value={phone_number}
                          onChange={e=>onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                         placeholder="09*********" required/>
+                         placeholder="*********۰۹" required/>
                 </div>
                 <div>
-                  {!isPasswordValid(password) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">password must be 4 or more letters and numbers</p>}
+                  {!isPasswordValid(password) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رمز شما باید بیشتر از ۴ کاراکتر حاوی عدد و حروف باشد</p>}
                   <label htmlFor="password"
-                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                  <input type="password" name="password" id="password" placeholder="password..."
+                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> رمز شما: </label>
+                  <input type="password" name="password" id="password" placeholder="رمز..."
                          value={password}
                          onChange={e=>onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                          required/>
                 </div>
                 <div>
-                  {!isRePasswordValid(re_password, password) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">password and re_password doesn't match</p>}
+                  {!isRePasswordValid(re_password, password) && <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">رمز و تکرار رمز باید برابر باشند</p>}
                   <label htmlFor="re-password"
-                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
-                    password</label>
-                  <input type="password" name="re_password" id="re_password" placeholder="re_password..."
+                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    تکرار رمز شما: </label>
+                  <input type="password" name="re_password" id="re_password" placeholder="تکرار رمز..."
                          value={re_password}
                          onChange={e=>onChange(e)}
                          className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -243,10 +244,11 @@ const SignupPage = ({signup, activate, loading, type, message, resetAuthState}) 
                            onChange={handleCheckboxChange}
                            required/>
                   </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">I accept the <Link
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="#">Terms and
-                      Conditions</Link></label>
+                  <div className="mr-3 text-sm">
+                    <label htmlFor="terms" className="font-light text-gray-500 dark:text-gray-300">با <Link
+                      className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="#">شرایط و مقررات&nbsp;</Link>
+                    موافق هستم
+                    </label>
                   </div>
                 </div>
                 {loading ? <button
@@ -270,14 +272,14 @@ const SignupPage = ({signup, activate, loading, type, message, resetAuthState}) 
                         : 'bg-gray-400 cursor-not-allowed'
                     } ${isOkayToSend && 'dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'}`}
                     disabled={!isOkayToSend}
-                  >Create
-                  an account
+                  >ایجاد حساب کاربری
                 </button>
                 }
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Already have an account? <Link to="/login"
-                                                 className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login
-                  here</Link>
+                  حساب کاربری دارید؟&nbsp;
+                  <Link to="/login" className="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                    ورود به حساب کاربری
+                  </Link>
                 </p>
               </form>
             </div>
