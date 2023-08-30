@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth/', include('apps.user.urls', namespace="auth")),
     path('categories/', include('apps.category.urls', namespace='category')),
     path('products/', include('apps.product.urls', namespace='product')),
+    path('blog/', include('apps.blog.urls', namespace='blog'))
 ]

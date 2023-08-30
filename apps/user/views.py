@@ -5,6 +5,9 @@ from apps.user.serializers import UserAccountSerializer, OtpCodeSerializer
 from apps.user.models import UserAccount, OtpCode
 from apps.user.permissions import HasOTPCode
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth import authenticate
+
 
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -135,7 +138,13 @@ class LoginUser(APIView):
             return Response({"type": "failure", "message": "Phone number doesn't exist"},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        if user.password == password:
+        print(user.phone_number)
+
+        print(authenticate(request, username=user.username, password=password))
+
+        authenticated_user = authenticate(request, username=user.username, password=password)
+
+        if authenticated_user is not None:
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
@@ -149,7 +158,8 @@ class LoginUser(APIView):
                 "refresh": refresh_token,
             }, status=status.HTTP_200_OK)
         else:
-            return Response({"type": "failure", "message": "Incorrect password"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"type": "failure", "message": "Incorrect password"},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RefreshTokenView(TokenRefreshView):
@@ -254,3 +264,46 @@ class CheckAuthentication(APIView):
     def get(self, request):
         user = request.user
         return Response({"type": "success", "message": "Authenticated"}, status=status.HTTP_200_OK)
+
+
+# =============================================< ADMIN >=============================================
+
+class LoginADMIN(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        try:
+            user = UserAccount.objects.get(username=username)
+        except Exception as e:
+            return Response({"type": "failure", "message": "username"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.is_superuser:
+            return Response({"type": "failure", "message": "only super user can login this way"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        print(user.password)
+
+        print(authenticate(request, username=username, password=password))
+
+        authenticated_user = authenticate(request, username=username, password=password)
+
+        if authenticated_user is not None:
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            # Return the tokens in the response
+            return Response({
+                "type": "success",
+                "message": "login admin successful",
+                "access": access_token,
+                "refresh": refresh_token,
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"type": "failure", "message": "Incorrect password"},
+                            status=status.HTTP_401_UNAUTHORIZED)

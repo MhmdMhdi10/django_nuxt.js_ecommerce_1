@@ -1,0 +1,29 @@
+    List View for Blog Posts:
+    Fetch a list of all blog posts.
+
+    Detail View for Blog Posts:
+    Retrieve the details of a specific blog post.
+
+    Create View for Blog Posts:
+    Create a new blog post.
+
+    Update View for Blog Posts:
+    Update an existing blog post.
+
+    Delete View for Blog Posts:
+    Delete an existing blog post.
+
+    List View for Post Reviews:
+    Fetch a list of reviews/comments for a specific blog post.
+
+    Create View for Post Reviews:
+    Add a new review/comment to a blog post.
+
+    Update View for Post Reviews:
+    Update an existing review/comment for a blog post.
+
+    Delete View for Post Reviews:
+    Delete a review/comment for a blog post.
+
+    User Activity History View:
+    Display a user's activity history, such as their post creation and review activity.
