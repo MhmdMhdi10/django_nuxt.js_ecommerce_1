@@ -6,19 +6,10 @@ from .models import Coupon
 
 @admin.register(Coupon)
 class CouponAdmin(BaseAdmin):
-    list_display = ('code', 'type', 'discount', 'discount_amount', 'expire_date',
+    list_display = ('code', 'coupon_type', 'coupon_value', 'expire_date',
                     'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
-    list_filter = ('type',)
+    list_filter = ('coupon_type',)
     search_fields = ('code',)
-    fieldsets = (
-        (None, {
-            'fields': ('code', 'type', 'expire_date')
-        }),
-        (_('Discount'), {
-            'fields': ('discount', 'discount_amount'),
-            'classes': ('collapse',)
-        }),
-    )
 
     class Meta:
         verbose_name = _('Coupon')

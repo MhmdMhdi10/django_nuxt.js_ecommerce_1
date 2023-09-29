@@ -12,9 +12,8 @@ class Coupon(BaseModel):
     ]
 
     code = models.CharField(_('code'), max_length=50, unique=True)
-    type = models.CharField(_('type'), max_length=20, choices=TYPE_CHOICES, default=TYPE_PERCENTAGE)
-    discount = models.DecimalField(_('discount'), max_digits=5, decimal_places=2)
-    discount_amount = models.DecimalField(_('discount amount'), max_digits=7, decimal_places=2, blank=True, null=True)
+    coupon_type = models.CharField(_('type'), max_length=20, choices=TYPE_CHOICES, default=TYPE_PERCENTAGE)
+    coupon_value = models.IntegerField()
     expire_date = models.DateTimeField(_('expiration date'))
 
     class Meta:
@@ -24,9 +23,4 @@ class Coupon(BaseModel):
     def __str__(self):
         return self.code
 
-    def save(self, *args, **kwargs):
-        if self.type == Coupon.TYPE_PERCENTAGE:
-            self.discount_amount = None
-        elif self.type == Coupon.TYPE_PRICE:
-            self.discount = None
-        super().save(*args, **kwargs)
+

@@ -1,11 +1,5 @@
 from rest_framework import serializers
-from .models import Product, ProductDiscount
-
-
-class ProductDiscountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductDiscount
-        fields = ('id', 'type', 'value')
+from .models import Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -13,4 +7,5 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'category', 'name', 'photo', 'description',
-                  'price', 'count', 'sold', 'created_at')
+                  'price', 'count', 'sold', 'created_at', 'discount_type',
+                  'discount_value', 'get_thumbnail')

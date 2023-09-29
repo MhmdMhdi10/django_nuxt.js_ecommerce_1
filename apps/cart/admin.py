@@ -9,13 +9,13 @@ class CartItemInline(admin.TabularInline):
 
 
 class CartAdmin(BaseAdmin):
-    list_display = ('id', 'user', 'total_price',
+    list_display = ('id', 'user',
                     'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
     inlines = (CartItemInline,)
 
 
 class CartItemAdmin(BaseAdmin):
-    list_display = ('id', 'cart', 'product', 'quantity', 'price',
+    list_display = ('id', 'cart', 'product', 'count',
                     'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
     list_filter = ('cart', 'product')
 

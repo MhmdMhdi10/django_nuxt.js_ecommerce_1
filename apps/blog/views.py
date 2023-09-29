@@ -11,7 +11,7 @@ class BlogPostListView(APIView):
 
     def get(self, request, ):
         try:
-            blog_posts = BlogPost.objects.all()
+            blog_posts = BlogPost.objects.active().all()
             serializer = BlogPostSerializer(blog_posts, many=True)
             return Response({"blogs": serializer.data, "message": "Blog posts retrieved successfully",
                              "type": "success"}, status=status.HTTP_200_OK)
@@ -24,7 +24,7 @@ class BlogPostDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            blog_post = BlogPost.objects.get(pk=pk)
+            blog_post = BlogPost.objects.active().get(pk=pk)
             serializer = BlogPostSerializer(blog_post)
             return Response({"blog": serializer.data, "message": "Blog post retrieved successfully",
                              "type": "success"}, status=status.HTTP_200_OK)
@@ -41,7 +41,7 @@ class PostReviewListView(APIView):
 
     def get(self, request, post_id):
         try:
-            comments = Comment.objects.filter(post=post_id)
+            comments = Comment.objects.active().filter(post=post_id)
             serializer = CommentSerializer(comments, many=True)
             return Response({"Comments": serializer.data,
                              "message": "Comments fetched successfully", "type": "success"},
@@ -73,7 +73,7 @@ class PostCommentUpdateView(APIView):
 
     def patch(self, request, comment_id):
         try:
-            comment = Comment.objects.get(pk=comment_id)
+            comment = Comment.objects.active().get(pk=comment_id)
         except Comment.DoesNotExist:
             return Response({"message": "Comment not found", "type": "failure"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -103,7 +103,7 @@ class PostCommentDeleteView(APIView):
 
     def delete(self, request, comment_id):
         try:
-            comment = Comment.objects.get(pk=comment_id)
+            comment = Comment.objects.active().get(pk=comment_id)
         except Comment.DoesNotExist:
             return Response({"message": "Comment not found", "type": "failure"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -139,7 +139,7 @@ class BlogPostUpdateView(APIView):
 
     def put(self, request, pk):
         try:
-            blog_post = BlogPost.objects.get(pk=pk)
+            blog_post = BlogPost.objects.active().get(pk=pk)
         except BlogPost.DoesNotExist:
             return Response({"message": "Blog post not found", "type": "failure"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -161,7 +161,7 @@ class BlogPostDeleteView(APIView):
 
     def delete(self, request, pk):
         try:
-            blog_post = BlogPost.objects.get(pk=pk)
+            blog_post = BlogPost.objects.active().get(pk=pk)
         except BlogPost.DoesNotExist:
             return Response({"message": "Blog post not found", "type": "failure"}, status=status.HTTP_404_NOT_FOUND)
 

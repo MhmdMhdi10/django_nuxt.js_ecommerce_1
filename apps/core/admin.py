@@ -13,26 +13,16 @@ class BaseAdmin(admin.ModelAdmin):
     def logical_delete(self, request, queryset):
         queryset.update(deleted_at=timezone.now())
         queryset.update(is_deleted=True)
-        queryset.update(is_active=False)
-
-    def deactivate(self, request, queryset):
-        queryset.update(is_active=False)
-
-    def activate(self, request, queryset):
-        queryset.update(is_active=True)
 
     def undelete(self, request, queryset):
         queryset.update(is_deleted=False)
         queryset.update(deleted_at=None)
-        queryset.update(is_active=True)
 
     def hard_delete(self, request, queryset):
         for obj in queryset:
             obj.hard_delete()
 
     logical_delete.short_description = _('Logical delete selected %(verbose_name_plural)s')
-    deactivate.short_description = _('Deactivate selected %(verbose_name_plural)s')
-    activate.short_description = _('Activate selected %(verbose_name_plural)s')
     undelete.short_description = _('Undelete selected %(verbose_name_plural)s')
     hard_delete.short_description = _('Hard delete selected %(verbose_name_plural)s')
 

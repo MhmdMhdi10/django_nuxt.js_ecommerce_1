@@ -1,0 +1,44 @@
+    View Cart:
+    Fetch the current contents of the user's shopping cart.
+
+    Add to Cart:
+    Add products to the shopping cart.
+
+    Update Cart Item:
+    Update the quantity or other details of items in the shopping cart.
+
+    Remove from Cart:
+    Remove items from the shopping cart.
+
+    Clear Cart:
+    Remove all items from the shopping cart.
+
+    Calculate Total:
+    Calculate the total cost of items in the shopping cart.
+
+    Apply Coupon:
+    Apply a coupon code to the shopping cart for discounts.
+
+    View Cart Summary:
+    Display a summary of the cart, including item count and total.
+
+    Checkout:
+    Initiate the checkout process by providing order and payment information.
+
+    Order History:
+    Display the user's order history, including past and current orders.
+
+    Order Details:
+    Display the details of a specific order.
+
+    User Cart Merge:
+    If users can log in from multiple devices, provide a way to merge their carts when they log in.
+
+    Save Cart for Later:
+    Allow users to move items from the cart to a "save for later" list.
+
+    Move to Wishlist:
+    Allow users to move items from the cart to their wishlist.
+
+    Guest Cart Retrieval:
+    Allow guests to retrieve their previous cart if they log in or provide an email.

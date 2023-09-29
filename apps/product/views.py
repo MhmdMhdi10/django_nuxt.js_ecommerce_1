@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
-from apps.product.models import Product, ProductDiscount
+from apps.product.models import Product
 from apps.product.serializers import ProductSerializer
 from apps.category.models import Category
 from django.db.models import Q
@@ -42,27 +42,8 @@ class ListProductsView(APIView):
 
         products = ProductSerializer(products, many=True)
 
-        products_data = []
-
-
-        for product in products.data:
-
-            try:
-                discount = ProductDiscount.objects.get(product=product['id'])
-
-                product['discount_type'] = discount.type
-                product['discount_value'] = discount.value
-
-                products_data.append(product)
-            except Exception as e:
-
-                product['discount_type'] = None
-                product['discount_value'] = None
-
-                products_data.append(product)
-
         if products:
-            return Response({'products': products_data,
+            return Response({'products': products.data,
                              'message': 'products listed successfully',
                              'type': 'success'}, status=status.HTTP_200_OK)
         else:
@@ -86,20 +67,7 @@ class ProductDetailView(APIView):
             product = Product.objects.active().get(id=product_id)
             product = ProductSerializer(product)
 
-            product_data = product.data
-
-            try:
-                discount = ProductDiscount.objects.get(product=product_id)
-
-                product_data['discount_type'] = discount.type
-                product_data['discount_value'] = discount.value
-
-            except Exception as e:
-
-                product_data['discount_type'] = None
-                product_data['discount_value'] = None
-
-            return Response({'product': product_data,
+            return Response({'product': product.data,
                              'message': 'product returned successfully', 'type': 'success'},
                             status=status.HTTP_200_OK)
 
@@ -172,30 +140,12 @@ class ListSearchView(APIView):
 
         search_results = ProductSerializer(search_results, many=True)
 
-        products_data = []
-
-        for product in search_results.data:
-
-            try:
-                discount = ProductDiscount.objects.get(product=product['id'])
-
-                product['discount_type'] = discount.type
-                product['discount_value'] = discount.value
-
-                products_data.append(product)
-            except Exception as e:
-
-                product['discount_type'] = None
-                product['discount_value'] = None
-
-                products_data.append(product)
-
-        if len(products_data) == 0:
-            return Response({'search_products': products_data,
+        if len(search_results.data) == 0:
+            return Response({'search_products': search_results.data,
                              'message': 'no product were found', 'type': 'failure'},
                             status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'search_products': products_data,
+        return Response({'search_products': search_results.data,
                          'message': 'search results returned successfully', 'type': 'success'},
                         status=status.HTTP_200_OK)
 
@@ -262,25 +212,7 @@ class ListBySearchView(APIView):
 
         product_results = ProductSerializer(product_results, many=True)
 
-        product_results_data = []
-
-        for product in product_results.data:
-
-            try:
-                discount = ProductDiscount.objects.get(product=product['id'])
-
-                product['discount_type'] = discount.type
-                product['discount_value'] = discount.value
-
-                product_results_data.append(product)
-            except Exception as e:
-
-                product['discount_type'] = None
-                product['discount_value'] = None
-
-                product_results_data.append(product)
-
-        if len(product_results_data) > 0:
+        if len(product_results.data) > 0:
             return Response(
                 {'filtered_products': product_results.data,
                  'message': 'results filtered successfully', "type": "success"},
@@ -336,30 +268,12 @@ class ListRelatedView(APIView):
 
             related_products = ProductSerializer(related_products, many=True)
 
-            related_products_data = []
-
-            for product in related_products.data:
-
-                try:
-                    discount = ProductDiscount.objects.get(product=product['id'])
-
-                    product['discount_type'] = discount.type
-                    product['discount_value'] = discount.value
-
-                    related_products_data.append(product)
-                except Exception as e:
-
-                    product['discount_type'] = None
-                    product['discount_value'] = None
-
-                    related_products_data.append(product)
-
-            if len(related_products_data) > 3:
+            if len(related_products.data) > 3:
                 return Response(
                     {'related_products': related_products.data[:3],
                      'message': 'related products returned successfully', 'type': "success"},
                     status=status.HTTP_200_OK)
-            elif len(related_products_data) > 0:
+            elif len(related_products.data) > 0:
                 return Response(
                     {'related_products': related_products.data,
                      'message': 'related products returned successfully', 'type': "success"},
