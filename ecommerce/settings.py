@@ -32,15 +32,13 @@ DJANGO_APPS = [
 PROJECT_APPS = ['apps.core', 'apps.user']
 
 ECOMMERCE_APPS = ['apps.category', 'apps.product', 'apps.user_profile', 'apps.cart', 'apps.shipping',
-                  'apps.wishlist', 'apps.review', 'apps.coupon', 'apps.order',
+                  'apps.wishlist', 'apps.review', 'apps.coupon', 'apps.order', 'apps.blog',
                   # 'apps.payment,
                   ]
 
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
-    'rest_framework_swagger',
-    'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'ckeditor',
@@ -176,26 +174,26 @@ SIMPLE_JWT = {
     )
 }
 
-DJOSER = {
-    'LOGIN_FIELD': 'phone_number',
-    'USER_CREATE_PASSWORD_RETYPE': True,
-    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    'SEND_CONFIRMATION_EMAIL': True,
-    'SET_USERNAME_RETYPE': True,
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-    'SET_PASSWORD_RETYPE': True,
-    'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
-    'SERIALIZERS': {
-        'user_create': 'apps.user.serializers.UserCreateSerializer',
-        'user': 'apps.user.serializers.UserCreateSerializer',
-        'current_user': 'apps.user.serializers.UserCreateSerializer',
-        'user_delete': 'djoser.serializers.UserDeleteSerializer',
-    },
-}
+# DJOSER = {
+#     'LOGIN_FIELD': 'phone_number',
+#     'USER_CREATE_PASSWORD_RETYPE': True,
+#     'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+#     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+#     'SEND_CONFIRMATION_EMAIL': True,
+#     'SET_USERNAME_RETYPE': True,
+#     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+#     'SET_PASSWORD_RETYPE': True,
+#     'PASSWORD_RESET_CONFIRM_RETYPE': True,
+#     'USERNAME_RESET_CONFIRM_URL': 'email/reset/confirm/{uid}/{token}',
+#     'ACTIVATION_URL': 'activate/{uid}/{token}',
+#     'SEND_ACTIVATION_EMAIL': True,
+#     'SERIALIZERS': {
+#         'user_create': 'apps.user.serializers.UserCreateSerializer',
+#         'user': 'apps.user.serializers.UserCreateSerializer',
+#         'current_user': 'apps.user.serializers.UserCreateSerializer',
+#         'user_delete': 'djoser.serializers.UserDeleteSerializer',
+#     },
+# }
 
 BT_ENVIRONMENT = os.environ.get('BT_ENVIRONMENT')
 BT_MERCHANT_ID = os.environ.get('BT_MERCHANT_ID')

@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.admin import BaseAdmin
 from django.contrib.auth import get_user_model
 
+from apps.user.models import OtpCode
 
 User = get_user_model()
 
@@ -28,3 +29,12 @@ class UserAccountAdmin(BaseAdmin, admin.ModelAdmin):
 
 
 admin.site.register(User, UserAccountAdmin)
+
+
+class OtpCodeAdmin(admin.ModelAdmin):
+    list_display = ('phone_number', 'code', 'created')
+    search_fields = ('phone_number', 'code')
+    ordering = ('-created',)
+
+
+admin.site.register(OtpCode, OtpCodeAdmin)

@@ -15,15 +15,14 @@ class Cart(BaseModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
     products = models.ManyToManyField(Product, through='CartItem')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    def add_product(self, product, quantity=1):
+    def add_product(self, product, count=1):
         cart_product, created = CartItem.objects.get_or_create(cart=self, product=product)
         if not created:
-            cart_product.quantity += quantity
+            cart_product.count += count
             cart_product.save()
         else:
-            cart_product.quantity = quantity
+            cart_product.count = count
             cart_product.save()
         self.update_total_price()
 
@@ -34,7 +33,7 @@ class Cart(BaseModel):
 
     def update_total_price(self):
         cart_products = CartItem.objects.filter(cart=self)
-        total_price = sum([cart_product.product.price * cart_product.quantity for cart_product in cart_products])
+        total_price = sum([cart_product.product.price * cart_product.count for cart_product in cart_products])
         self.total_price = total_price
         self.save()
 
@@ -47,13 +46,12 @@ class CartItem(BaseModel):
 
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    price = models.IntegerField()
+    count = models.PositiveIntegerField(default=1)
 
     def save(self, *args, **kwargs):
 
-        self.price = self.product.price * self.quantity
+        self.price = self.product.price * self.count
         super(CartItem, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.quantity} x {self.product.name} in cart'
+        return f'{self.count} x {self.product.name} in cart'

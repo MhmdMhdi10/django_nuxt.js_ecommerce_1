@@ -5,4 +5,4 @@ from .models import Coupon
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
-        fields = ('id', 'code', 'type', 'discount', 'discount_amount', 'expire_date')
+        fields = '__all__'

@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.core.models import BaseModel
@@ -27,6 +29,7 @@ class Order(BaseModel):
     shipping_name = models.CharField(max_length=255)
     shipping_price = models.IntegerField()
     shipping_time = models.CharField(max_length=255)
+    address = models.TextField(null=True, blank=True)
     status = models.CharField(
         max_length=50, choices=OrderStatus.choices, default=OrderStatus.NOT_PROCESSED)
     is_paid = models.BooleanField(default=False)
@@ -41,9 +44,10 @@ class Order(BaseModel):
 
 class OrderItem(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
+    count = models.PositiveIntegerField(default=1)
     unit_price = models.IntegerField()
+    date_added = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = _('Order Item')
