@@ -1,5 +1,5 @@
 import { Footer } from 'flowbite-react';
-import { BsGithub, BsInstagram, BsTruck, BsWhatsapp, BsTelegram, BsTelephone } from 'react-icons/bs';
+import { BsInstagram , BsWhatsapp, BsTelegram, BsTelephone } from 'react-icons/bs';
 
 export default function FooterWithLogo() {
   return (
@@ -28,7 +28,7 @@ export default function FooterWithLogo() {
               </Footer.LinkGroup>
             </div>
             <div>
-              <Footer.Title title="Follow us" />
+              <Footer.Title title="خدمات وبسایت" />
               <Footer.LinkGroup col>
                 <Footer.Link href="#" className={'md:mr-0'}>
                   محصولات

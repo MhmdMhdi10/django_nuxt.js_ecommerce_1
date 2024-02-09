@@ -18,7 +18,7 @@ function Layout(props) {
   },[])
 
   return(
-    <div dir="rtl" className="">
+    <div dir="rtl">
       <NavbarWithCTAButton/>
       <ToastContainer autoClose={8000}/>
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900  text-gray-900 dark:text-white">{props.children}</main>
