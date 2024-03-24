@@ -29,4 +29,5 @@ class CategoryListView(APIView):
         for category in serialized_categories:
             category['sub_categories'] = self.get_subcategories(category['id'])
 
-        return Response({'categories': serialized_categories, 'message': 'categories displayed successfully', 'type': 'success'}, status=status.HTTP_200_OK)
+        return Response({'categories': serialized_categories, 'message': 'categories displayed successfully',
+                         'type': 'success'}, status=status.HTTP_200_OK)

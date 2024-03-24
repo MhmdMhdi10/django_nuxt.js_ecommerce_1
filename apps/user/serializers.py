@@ -48,3 +48,4 @@ class OtpCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OtpCode
         fields = ['code']
+

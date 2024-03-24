@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.admin import BaseAdmin
 from django.contrib.auth import get_user_model
 
-from apps.user.models import OtpCode
+from apps.user.models import OtpCode, RecoverLink
 
 User = get_user_model()
 
@@ -38,3 +38,11 @@ class OtpCodeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(OtpCode, OtpCodeAdmin)
+
+
+@admin.register(RecoverLink)
+class RecoverLinkAdmin(admin.ModelAdmin):
+    list_display = ('uuid', 'expiration_date', 'phone_number', 'created')
+    search_fields = ('phone_number',)
+    list_filter = ('created',)
+    readonly_fields = ('uuid', 'expiration_date', 'phone_number', 'created')
