@@ -12,8 +12,6 @@ from apps.core.models import BaseModel
 domain = settings.DOMAIN
 
 
-
-
 class Product(BaseModel):
     class Meta:
         verbose_name = 'Product'
