@@ -4,6 +4,7 @@ from datetime import datetime
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from apps.category.models import Category
+from apps.brand.models import Brand
 
 from django.conf import settings
 
@@ -18,10 +19,12 @@ class Product(BaseModel):
         verbose_name_plural = 'Products'
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
+
     slug = models.SlugField(default='')
 
     name = models.JSONField(_('name'), default={"en": "", "fa": ""}, unique=True)
-    brand = models.JSONField(_('brand'), default={"en": "", "fa": ""})
+
     description = models.JSONField(_('description'), default={"en": "", "fa": ""})
 
     counting_unit = models.JSONField(_('counting_unit'), default={"en": "", "fa": ""})
