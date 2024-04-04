@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from apps.user.serializers import UserAccountSerializer, OtpCodeSerializer
-from apps.user.models import UserAccount, OtpCode
+from apps.user.models import UserAccount, OtpCode, RecoverLink
 from apps.user.permissions import HasOTPCode
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import check_password
@@ -71,7 +71,18 @@ class RegisterUser(APIView):
             }
 
             return Response({"type": "success", 'message': 'we sent you a code'}, status=status.HTTP_202_ACCEPTED)
-        return Response({"type": "failure", "message": f"{ser_data.errors}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        error_message = {}
+
+        if 'username' in ser_data.errors:
+            error_message['username'] = ser_data.errors['username'][0][0:]
+
+        if 'phone_number' in ser_data.errors:
+            error_message['phone_number'] = ser_data.errors['phone_number'][0][0:]
+
+        print(error_message)
+
+        return Response({"type": "failure", "message": f"{error_message}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterUserVerifyCode(APIView):
@@ -84,6 +95,8 @@ class RegisterUserVerifyCode(APIView):
         user_data = UserAccountSerializer(data=request.data)
 
         # getting the otp code from database
+
+        print(ser_data)
 
         if user_data.is_valid():
 
@@ -104,7 +117,7 @@ class RegisterUserVerifyCode(APIView):
 
                     # checks if the code is right
 
-                    if code.code == ser_data.validated_data['code']:
+                    if code.code == int(ser_data.validated_data['code']):
                         user = UserAccount.objects.create_user(
                             username=user_data.validated_data['username'],
                             password=user_data.validated_data['password'],
@@ -221,24 +234,115 @@ class ChangePassword(APIView):
             return Response({"type": "failure", "message": "Invalid Input"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RecoverPassword(APIView):
+class RecoverRequest(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def post(self, request):
-
         try:
             phone_number = request.data.get('phone_number')
 
-            password = UserAccount.objects.get(phone_number=phone_number)
+            # Check if the user with the provided phone number exists
+            user = UserAccount.objects.get(phone_number=phone_number)
 
-            from apps.user.otp_sender import send_otp_code
+            try:
+                # Create a RecoverLink instance with a unique UUID and set the expiration date
+                existing_recover_link = RecoverLink.objects.get(phone_number=phone_number)
+            except Exception as e:
+                existing_recover_link = None
 
-            send_otp_code(phone_number, password, message="رمز فعلی شما:")
+            if existing_recover_link is not None:
+                # checks for code expiration and deletes the code
 
-            return Response({"type": "success", "message": "Your password has been sent to you via sms"}, status=status.HTTP_200_OK)
+                if existing_recover_link.is_expired():
+                    existing_recover_link.delete()
+                    existing_recover_link = None
+                else:
+                    return Response({"type": "failure",
+                                     'message': "your last code has not expired yet. please wait for 10 minutes"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            # sends otp code if none exist in the database with this specific phone_number
+
+            if existing_recover_link is None:
+                new_recover_link = RecoverLink(phone_number=phone_number)
+                new_recover_link.save()
+                # Include the recover link in the message sent to the user
+                message = f"Click the following link to reset your password: localhost:3000/auth/recover/{str(new_recover_link.uuid)}"
+
+                from apps.user.otp_sender import send_otp_code
+                # Send the link to the user via SMS or any other preferred method
+                send_otp_code(phone_number, message)
+
+                return Response({"type": "success", "message": "Password reset link has been sent to you via SMS"},
+                                status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({"type": "failure", "message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"type": "failure", "message": "User with the provided phone number does not exist"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class RecoverLinkVerify(APIView):
+    permission_classes = (HasOTPCode, )
+
+    def post(self, request):
+        uuid = request.data.get('uuid')
+
+        try:
+            code = RecoverLink.objects.get(uuid=uuid)
+        except Exception as e:
+            code = None
+
+        self.check_object_permissions(request, obj=code)
+
+        if code.is_expired():
+            print(1)
+            return Response({"type": "failure", "message": "your recover link has been expired send another request"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            print(2)
+            return Response({"type": "success", "message": "your link is valid. now you can change your password"},
+                            status=status.HTTP_200_OK)
+
+
+class RecoverChangePassword(APIView):
+    permission_classes = (HasOTPCode,)
+
+    def post(self, request):
+        uuid = request.data.get('uuid')
+        password = request.data.get('password')
+        re_password = request.data.get('re_password')
+
+        if not password == re_password:
+            return Response({"type": "failure", "message": "your password and re_password do not match"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            try:
+                existing_uuid = RecoverLink.objects.get(uuid=uuid)
+            except Exception as e:
+                return Response({"type": "failure", "message": "your recover link does not exist"},
+                                status=status.HTTP_401_UNAUTHORIZED)
+
+            if existing_uuid.is_expired():
+                return Response({"type": "failure", "message": "your uuid has been expired"},
+                                status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                try:
+                    user = UserAccount.objects.get(phone_number=existing_uuid.phone_number)
+                except Exception as e:
+                    return Response({"type": "failure", "message": "user with this phone_number does not exist"},
+                                    status=status.HTTP_401_UNAUTHORIZED)
+
+                try:
+                    user.set_password(password)
+                    existing_uuid.delete()
+                except Exception as e:
+                    return Response({"type": "failure", "message": "somthing went wrong on the server please try again"},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                return Response({"type": "success", "message": "your link is valid. now you can change your password"},
+                                status=status.HTTP_202_ACCEPTED)
 
 
 class GetCurrentUser(APIView):

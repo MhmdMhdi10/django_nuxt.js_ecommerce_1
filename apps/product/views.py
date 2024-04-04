@@ -57,14 +57,14 @@ class ProductDetailView(APIView):
 
     def get(self, request, pid):
         try:
-            product_id = int(pid)
+            slug = pid
         except Exception as e:
             return Response(
                 {'message': 'Product ID must be an integer', 'type': 'failure'},
                 status=status.HTTP_404_NOT_FOUND)
 
-        if Product.objects.active().filter(id=product_id).exists():
-            product = Product.objects.active().get(id=product_id)
+        if Product.objects.active().filter(slug=slug).exists():
+            product = Product.objects.active().get(slug=slug)
             product = ProductSerializer(product)
 
             return Response({'product': product.data,
