@@ -9,7 +9,7 @@ class Category(BaseModel):
         verbose_name_plural = _('Categories')
 
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, null=True, blank=True)
-    name = models.JSONField(_('name'), default=dict)
+    name = models.JSONField(_('name'), default={"en": "", "fa": ""})
 
     def get_name(self, language_code):
         return self.name.get(language_code, '')
