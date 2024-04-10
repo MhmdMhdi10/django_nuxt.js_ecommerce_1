@@ -18,4 +18,7 @@ urlpatterns = [
     path('wishlist/', include('apps.wishlist.urls')),
     path('review/', include('apps.review.urls')),
     path('shipping/', include('apps.shipping.urls')),
-]
+    path('brand/', include('apps.brand.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

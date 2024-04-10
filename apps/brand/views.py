@@ -10,7 +10,7 @@ class BrandListView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
-        brands = Brand.objects.active().filter(parent=None)
+        brands = Brand.objects.active()
 
         if not brands.exists():
             return Response({'message': 'No brand was found', 'type': 'failure'}, status=status.HTTP_404_NOT_FOUND)
@@ -21,7 +21,7 @@ class BrandListView(APIView):
                          'type': 'success'}, status=status.HTTP_200_OK)
 
 
-class ProductDetailView(APIView):
+class BrandDetailView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, pid):

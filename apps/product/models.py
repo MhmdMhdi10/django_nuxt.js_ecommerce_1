@@ -31,6 +31,8 @@ class Product(BaseModel):
     counting_unit_2 = models.JSONField(_('counting_unit_2'), default={"en": "", "fa": ""}, null=True, blank=True)
     counting_unit_3 = models.JSONField(_('counting_unit_3'), default={"en": "", "fa": ""}, null=True, blank=True)
 
+    garantee = models.JSONField(_('garantee'), default={"en": "", "fa": ""}, null=True, blank=True)
+
     photo = models.ImageField(upload_to='photos/%Y/%m/')
 
     price = models.IntegerField()
