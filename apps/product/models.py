@@ -21,26 +21,23 @@ class Product(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
 
-    slug = models.SlugField(default='')
+    slug = models.SlugField(default='', unique=True)
 
     name = models.JSONField(_('name'), default={"en": "", "fa": ""}, unique=True)
 
     description = models.JSONField(_('description'), default={"en": "", "fa": ""})
 
     counting_unit = models.JSONField(_('counting_unit'), default={"en": "", "fa": ""})
-    counting_unit_2 = models.JSONField(_('counting_unit_2'), default={"en": "", "fa": ""}, null=True, blank=True)
-    counting_unit_3 = models.JSONField(_('counting_unit_3'), default={"en": "", "fa": ""}, null=True, blank=True)
-
-    garantee = models.JSONField(_('garantee'), default={"en": "", "fa": ""}, null=True, blank=True)
+    price = models.IntegerField()
 
     photo = models.ImageField(upload_to='photos/%Y/%m/')
 
-    price = models.IntegerField()
+    garantee = models.JSONField(_('garantee'), default={"en": "", "fa": ""}, null=True, blank=True)
+
     count = models.IntegerField(default=0)
 
     sold = models.IntegerField(default=0)
     popularity = models.IntegerField(default=0)
-
 
     class DiscountType(models.TextChoices):
         PERCENTAGE = 'percentage'
@@ -53,7 +50,6 @@ class Product(BaseModel):
         default=DiscountType.PERCENTAGE,
         null=True, blank=True
     )
-
 
     def get_thumbnail(self):
         if self.photo:

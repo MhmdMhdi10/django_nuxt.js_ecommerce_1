@@ -32,7 +32,8 @@ DJANGO_APPS = [
 PROJECT_APPS = ['apps.core', 'apps.user']
 
 ECOMMERCE_APPS = ['apps.category', 'apps.product', 'apps.user_profile', 'apps.cart', 'apps.shipping',
-                  'apps.wishlist', 'apps.review', 'apps.coupon', 'apps.order', 'apps.blog', 'apps.brand'
+                  'apps.wishlist', 'apps.review', 'apps.coupon', 'apps.order', 'apps.blog', 'apps.brand',
+                  'apps.ProductPrice', 'apps.ProductPhotos'
                   # 'apps.payment,
                   ]
 
@@ -99,8 +100,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'http://127.0.0.1:3000',
-    'http://188.121.110.240:8000',
-    'http://188.121.110.240'
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -108,8 +108,14 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'http://127.0.0.1:3000',
-    'http://188.121.110.240:8000',
-    'http://188.121.110.240'
+
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:3000',
 ]
 
 PASSWORD_HASHERS = [

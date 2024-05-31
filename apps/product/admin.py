@@ -5,8 +5,9 @@ from apps.core.admin import BaseAdmin
 
 
 class ProductAdmin(BaseAdmin):
-    list_display = ('id', 'name', 'slug', 'category', 'price', 'count', 'sold', 'discount_type', 'discount_value',
-                    'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by', 'is_deleted')
+    list_display = ('id', 'name', 'slug', 'category', 'photo', 'price', 'count', 'sold', 'discount_type'
+                    , 'discount_value', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'updated_by'
+                    , 'is_deleted')
     list_filter = ('category', 'created_at', 'updated_at', 'is_deleted')
     list_editable = ['price']
     search_fields = ('name', 'description')

@@ -6,4 +6,5 @@ class BrandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = ['id', 'name', 'description', 'country', 'picture', 'file', 'file_2']
+        fields = ['id', 'name', 'description', 'country', 'picture', 'file', 'file_2',
+                  'created_at', 'updated_at',]

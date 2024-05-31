@@ -2,9 +2,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from apps.product.models import Product
+from apps.ProductPhotos.models import ProductPhoto
 from apps.product.serializers import ProductSerializer
+from apps.ProductPrice.serializers import PriceByUnitSerializer
 from apps.category.models import Category
 from django.db.models import Q
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from .models import Product
+from .serializers import ProductSerializer
 
 
 class ListProductsView(APIView):
@@ -12,44 +21,59 @@ class ListProductsView(APIView):
 
     def get(self, request):
         sort_by = request.query_params.get('sort_by')
-
         if not (sort_by == 'created' or sort_by == 'price' or sort_by == 'sold' or sort_by == 'name'):
             sort_by = 'created_at'
 
         order = request.query_params.get('order')
         limit = request.query_params.get('limit')
+        page = request.query_params.get('page', 0)
+
+        limit = int(limit)
+        page = int(page)
+
+        offset = (int(page)-1) * int(limit)
 
         if not limit:
             limit = 12
 
         try:
             limit = int(limit)
-        except Exception as e:
+        except ValueError:
             return Response(
                 {'message': 'Limit must be an integer', 'type': 'failure'},
-                status=status.HTTP_404_NOT_FOUND)
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if limit <= 0:
             limit = 12
 
+        try:
+            offset = int(offset)
+        except ValueError:
+            return Response(
+                {'message': 'Offset must be an integer', 'type': 'failure'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if page < 0:
+            page = 0
+
         if order == 'desc':
             sort_by = '-' + sort_by
-            products = Product.objects.active().order_by(sort_by).all()[:int(limit)]
-        elif order == 'asc':
-            products = Product.objects.active().order_by(sort_by).all()[:int(limit)]
-        else:
-            products = Product.objects.active().order_by(sort_by).all()
 
-        products = ProductSerializer(products, many=True)
+        total_products = Product.objects.active().count()
+        products = Product.objects.active().order_by(sort_by)[offset:offset+limit]
+        serialized_products = ProductSerializer(products, many=True)
 
-        if products:
-            return Response({'products': products.data,
-                             'message': 'products listed successfully',
-                             'type': 'success'}, status=status.HTTP_200_OK)
-        else:
-            return Response(
-                {'message': 'No products to list', 'type': 'failure'},
-                status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                'products': serialized_products.data,
+                'total_products': total_products,
+                'message': 'Products listed successfully',
+                'type': 'success'
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class ProductDetailView(APIView):
@@ -92,18 +116,56 @@ class ListSearchView(APIView):
 
         search = data['search']
 
+        page = data['page']
+        limit = data['limit']
+
+        offset = (int(page) - 1) * int(limit)
+
+        if not limit:
+            limit = 12
+
+        try:
+            limit = int(limit)
+        except ValueError:
+            return Response(
+                {'message': 'Limit must be an integer', 'type': 'failure'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if limit <= 0:
+            limit = 12
+
+        try:
+            offset = int(offset)
+        except ValueError:
+            return Response(
+                {'message': 'Offset must be an integer', 'type': 'failure'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if page < 0:
+            page = 0
+
+
+
         if len(search) == 0:
-            search_results = Product.objects.active().order_by('-created_at').all()
+            search_results = Product.objects.active().order_by('-created_at').all()[offset:offset+limit]
+            total_products = Product.objects.active().count()
         else:
             search_results = Product.objects.active().filter(
                 Q(description__icontains=search) | Q(name__icontains=search)
-            )
+            )[offset:offset+limit]
+            total_products = Product.objects.active().filter(
+                Q(description__icontains=search) | Q(name__icontains=search)
+            ).count()
+
 
         if category_id == 0:
 
             search_results = ProductSerializer(search_results, many=True)
             return Response(
                 {'search_products': search_results.data,
+                 "total_products": total_products,
                  'message': 'search results returned successfully', 'type': 'success'},
                 status=status.HTTP_200_OK)
 
@@ -140,12 +202,15 @@ class ListSearchView(APIView):
 
         search_results = ProductSerializer(search_results, many=True)
 
+
+
         if len(search_results.data) == 0:
             return Response({'search_products': search_results.data,
                              'message': 'no product were found', 'type': 'failure'},
                             status=status.HTTP_404_NOT_FOUND)
 
         return Response({'search_products': search_results.data,
+                         "total_products": total_products,
                          'message': 'search results returned successfully', 'type': 'success'},
                         status=status.HTTP_200_OK)
 
