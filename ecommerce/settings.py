@@ -96,38 +96,22 @@ DATABASES = {
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://lalectro.com:8000',
     'http://lalectro.com',
-    'http://116.202.105.11:8000',
-    'http://116.202.105.11',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://127.0.0.1:3000',
-
+    'http://localhost',
+    'http://127.0.0.1',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://lalectro.com:8000',
     'http://lalectro.com',
-    'http://116.202.105.11:8000',
-    'http://116.202.105.11',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://127.0.0.1:3000',
+    'http://localhost',
+    'http://127.0.0.1',
 
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://lalectro.com:8000',
     'http://lalectro.com',
-    'http://116.202.105.11:8000',
-    'http://116.202.105.11',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://127.0.0.1:3000',
+    'http://localhost',
+    'http://127.0.0.1',
 
 ]
 
@@ -228,7 +212,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "user.UserAccount"
 
 CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_HTTPONLY = True
 #
 # # if not DEBUG:
 # DEFAULT_FROM_EMAIL = 'MM Pc'
