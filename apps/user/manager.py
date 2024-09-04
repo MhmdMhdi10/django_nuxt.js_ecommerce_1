@@ -7,7 +7,7 @@ class UserAccountManager(BaseUserManager):
             raise ValueError('Users must have a username')
 
         username = self.model.normalize_username(username)
-        user = self.model(username=username, **extra_fields)
+        user = self.model(username=username,phone_number=username ,**extra_fields)
 
         user.set_password(password)
         user.save()
@@ -32,5 +32,6 @@ class UserAccountManager(BaseUserManager):
         user = self.create_user(username, password, **extra_fields)
 
         user.is_superuser = True
+        user.is_staff = True
         user.save()
         return user

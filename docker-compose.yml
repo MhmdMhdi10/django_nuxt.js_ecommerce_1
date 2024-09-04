@@ -3,7 +3,7 @@ services:
   accountract:
     build: .
     container_name: accountract-back
-    command: python manage.py runserver
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/app
     ports:
@@ -25,12 +25,12 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=accountract
+      - POSTGRES_DB=ecommerce_1
     networks:
       - accountract-network
     volumes:
       - accountract-db-data:/var/lib/postgresql/data
-    restart: on-failure
+    restart: always
 
   # # pgAdmin for database management
   # pgadmin:
@@ -49,8 +49,10 @@ services:
 
 networks:
   accountract-network:
-    driver: bridge
+    external: true
 
 volumes:
   # Volume for accountract database data
   accountract-db-data:
+
+
