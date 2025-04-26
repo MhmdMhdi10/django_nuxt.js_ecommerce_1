@@ -1,2 +1,1 @@
-# django_backend_ecommerce_1
-django
+# django_Nuxt.js_ecommerce
